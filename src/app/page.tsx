@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Search, Home, Users, Calendar, PawPrint, Star, TrendingUp, ShieldCheck, MapPin } from 'lucide-react';
 
