@@ -8,11 +8,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .neighborhood-list::-webkit-scrollbar { width: 6px; }
+        .neighborhood-list::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
+    <!-- Navigation -->
     <nav class="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-2 text-rose-500 font-extrabold text-2xl">
+        <div class="flex items-center gap-2 text-rose-500 font-extrabold text-2xl cursor-pointer" onclick="window.location.reload()">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             <span>RentEstimator</span>
         </div>
@@ -23,132 +26,263 @@
         </div>
     </nav>
 
-    <header class="bg-white pt-20 pb-28 px-6 border-b text-center">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-6xl font-extrabold tracking-tight mb-6 text-gray-900 leading-tight">
-                Find your <span class="text-rose-500">perfect</span> furnished home.
-            </h1>
-            <p class="text-xl text-gray-500 mb-12 max-w-2xl mx-auto font-medium">
-                AI-powered estimates and real-time comparisons for premium mid-term rentals.
-            </p>
+    <!-- Hero / Search Engine -->
+    <header class="bg-white pt-16 pb-24 px-6 border-b">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h1 class="text-6xl font-extrabold tracking-tight mb-6 text-gray-900 leading-tight">
+                    Premium <span class="text-rose-500">Furnished</span> Rentals in LA.
+                </h1>
+                <p class="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
+                    Enter your details to get a real-market price estimate and compare the top 3 best-value listings.
+                </p>
+            </div>
 
-            <div class="bg-white shadow-2xl rounded-3xl border p-2 flex flex-col md:flex-row gap-2 max-w-5xl mx-auto ring-1 ring-gray-100">
-                <div class="flex-1 flex items-center px-5 py-4 md:border-r hover:bg-gray-50 rounded-2xl transition cursor-pointer">
-                    <div class="text-left">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</label>
-                        <input type="text" class="w-full bg-transparent font-bold text-lg focus:outline-none" value="Los Angeles, CA">
+            <!-- Search Console -->
+            <div class="bg-white shadow-2xl rounded-[40px] border p-6 max-w-6xl mx-auto ring-1 ring-gray-100 flex flex-col gap-8 relative">
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Location / Neighborhood Autocomplete -->
+                    <div class="flex flex-col gap-2 relative">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">Where in LA?</label>
+                        <div class="relative">
+                            <input id="locationInput" type="text" class="w-full bg-gray-50 border border-gray-100 px-5 py-4 rounded-2xl font-bold text-lg focus:outline-none focus:ring-2 focus:ring-rose-500/20" placeholder="e.g. Venice, Pasadena" value="">
+                            <!-- Quick List (Mock Autocomplete Result) -->
+                            <div id="neighborhoodDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-white border shadow-2xl rounded-2xl z-[100] max-h-[300px] overflow-y-auto neighborhood-list">
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Venice')">Venice</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Pasadena')">Pasadena</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Glendale')">Glendale</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Studio City')">Studio City</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Hollywood')">Hollywood</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Santa Monica')">Santa Monica</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Silver Lake')">Silver Lake</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Echo Park')">Echo Park</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Burbank')">Burbank</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold border-b" onclick="selectLocation('Westwood')">Westwood</div>
+                                <div class="px-5 py-3 hover:bg-gray-50 cursor-pointer font-bold" onclick="selectLocation('Baldwin Park')">Baldwin Park</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Budget Range -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">Nightly Budget</label>
+                        <select class="w-full bg-gray-50 border border-gray-100 px-5 py-4 rounded-2xl font-bold text-lg focus:outline-none cursor-pointer">
+                            <option value="">Any Budget</option>
+                            <option value="1">$100 - $300</option>
+                            <option value="2" selected>$300 - $600</option>
+                            <option value="3">$600 - $1,000</option>
+                            <option value="4">$1,000+</option>
+                        </select>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">Duration</label>
+                        <select class="w-full bg-gray-50 border border-gray-100 px-5 py-4 rounded-2xl font-bold text-lg focus:outline-none cursor-pointer">
+                            <option value="1">1 - 2 Weeks</option>
+                            <option value="2" selected>1 Month</option>
+                            <option value="3">3 Months+</option>
+                        </select>
+                    </div>
+
+                    <!-- Size / Guests -->
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">Home Size</label>
+                        <select class="w-full bg-gray-50 border border-gray-100 px-5 py-4 rounded-2xl font-bold text-lg focus:outline-none cursor-pointer">
+                            <option selected>1 BR / 1 BA</option>
+                            <option>2 BR / 2 BA</option>
+                            <option>3 BR / 3 BA</option>
+                            <option>Whole House (4+)</option>
+                        </select>
                     </div>
                 </div>
-                <div class="flex-1 flex items-center px-5 py-4 md:border-r hover:bg-gray-50 rounded-2xl transition cursor-pointer">
-                    <div class="text-left">
-                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">Stay Dates</label>
-                        <p class="font-bold text-lg text-gray-300">Add dates</p>
+
+                <!-- Secondary Filters row -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">Guests</label>
+                        <input type="number" class="w-full bg-gray-50 border border-gray-100 px-5 py-4 rounded-2xl font-bold text-lg focus:outline-none" value="2">
                     </div>
+                    <div class="flex flex-col gap-2">
+                        <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-2">Pets?</label>
+                        <select class="w-full bg-gray-50 border border-gray-100 px-5 py-4 rounded-2xl font-bold text-lg focus:outline-none cursor-pointer">
+                            <option selected>No Pets</option>
+                            <option>1 Pet</option>
+                            <option>Multiple</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-3 px-2 pb-4">
+                        <input type="checkbox" checked class="w-6 h-6 rounded-lg border-gray-200 text-rose-500 focus:ring-rose-500/20 cursor-pointer">
+                        <span class="font-bold text-gray-600">Requires Parking</span>
+                    </div>
+                    <button class="bg-rose-500 text-white rounded-2xl px-1 py-5 font-bold hover:bg-rose-600 transition flex items-center justify-center gap-3 shadow-rose-200 shadow-xl w-full" id="searchBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <span>Calculate Estimate</span>
+                    </button>
                 </div>
-                <button class="bg-rose-500 text-white rounded-2xl px-10 py-5 font-bold hover:bg-rose-600 transition flex items-center justify-center gap-3 shadow-rose-200 shadow-xl">
-                    <span>Analyze Market</span>
-                </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-6 py-20">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <div>
-                <h2 class="text-4xl font-extrabold mb-2 text-gray-900">Top 3 Results in LA</h2>
-                <p class="text-gray-400 font-semibold uppercase tracking-widest text-xs">Analysis based on Price, 4.8+ Ratings & Recent Reviews</p>
-            </div>
-            <div class="bg-green-50 text-green-600 font-bold px-5 py-3 rounded-2xl flex items-center gap-2 border border-green-100 shadow-sm">
-                <span>Price Match Verified</span>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <!-- Venice -->
-            <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-2xl transition-all duration-500 relative">
-                <div class="absolute top-6 left-6 z-10 bg-rose-500 text-white font-bold px-4 py-1.5 rounded-full text-xs shadow-lg uppercase tracking-wider">Best Value</div>
-                <div class="aspect-[4/3] overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="font-extrabold text-2xl leading-tight text-gray-900 group-hover:text-rose-500 transition">Venice Architectural Gem</h3>
-                        <div class="flex items-center gap-1 font-bold text-gray-900 bg-gray-50 px-3 py-1.5 rounded-xl">
-                            <span class="text-amber-400">★</span>
-                            <span>4.95</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-500 mb-8 font-medium leading-relaxed">Modern masterpiece with rooftop deck and stunning Pacific ocean views. Perfect for remote work.</p>
-                    <div class="flex items-end justify-between border-t pt-6">
-                        <div>
-                            <span class="text-3xl font-black text-gray-900">$450</span>
-                            <span class="text-gray-400 font-bold tracking-tight">/night</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="bg-gray-900 text-white rounded-xl px-3 py-1 font-bold text-sm">98% Score</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hollywood -->
-            <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-2xl transition-all duration-500 relative">
-                <div class="absolute top-6 left-6 z-10 bg-amber-400 text-amber-950 font-bold px-4 py-1.5 rounded-full text-xs shadow-lg uppercase tracking-wider">Premium Choice</div>
-                <div class="aspect-[4/3] overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="font-extrabold text-2xl leading-tight text-gray-900 group-hover:text-amber-500 transition">Hollywood Hills Retreat</h3>
-                        <div class="flex items-center gap-1 font-bold text-gray-900 bg-gray-50 px-3 py-1.5 rounded-xl">
-                            <span class="text-amber-400">★</span>
-                            <span>4.88</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-500 mb-8 font-medium leading-relaxed">Infinity pool overlooking the iconic skyline. The ultimate in privacy and Hollywood luxury.</p>
-                    <div class="flex items-end justify-between border-t pt-6">
-                        <div>
-                            <span class="text-3xl font-black text-gray-900">$850</span>
-                            <span class="text-gray-400 font-bold tracking-tight">/night</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="bg-gray-900 text-white rounded-xl px-3 py-1 font-bold text-sm">95% Score</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Silver Lake -->
-            <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-2xl transition-all duration-500 relative">
-                <div class="absolute top-6 left-6 z-10 bg-indigo-600 text-white font-bold px-4 py-1.5 rounded-full text-xs shadow-lg uppercase tracking-wider">Local Favorite</div>
-                <div class="aspect-[4/3] overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                </div>
-                <div class="p-8">
-                    <div class="flex justify-between items-start mb-3">
-                        <h3 class="font-extrabold text-2xl leading-tight text-gray-900 group-hover:text-indigo-600 transition">Silver Lake Artisan Loft</h3>
-                        <div class="flex items-center gap-1 font-bold text-gray-900 bg-gray-50 px-3 py-1.5 rounded-xl">
-                            <span class="text-amber-400">★</span>
-                            <span>4.92</span>
-                        </div>
-                    </div>
-                    <p class="text-gray-500 mb-8 font-medium leading-relaxed">Industrial-chic loft steps from the reservoir and trendy cafes. Experience true LA neighborhood life.</p>
-                    <div class="flex items-end justify-between border-t pt-6">
-                        <div>
-                            <span class="text-3xl font-black text-gray-900">$325</span>
-                            <span class="text-gray-400 font-bold tracking-tight">/night</span>
-                        </div>
-                        <div class="text-right">
-                            <div class="bg-gray-900 text-white rounded-xl px-3 py-1 font-bold text-sm">92% Score</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Dynamic Section: Will show after search -->
+    <main id="resultsMain" class="max-w-7xl mx-auto px-6 py-20 min-h-[600px]">
+        <div class="text-center py-32 opacity-30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-6"><path d="M2 12h10"/><path d="M9 4v16"/><path d="m3 9 3 3-3 3"/><path d="M14 12h8"/><path d="m19 9 3 3-3 3"/></svg>
+            <h2 class="text-3xl font-extrabold uppercase tracking-widest">Start Searching Above</h2>
+            <p class="font-medium text-lg">We'll show you the estimated market rate and top 3 listing matches.</p>
         </div>
     </main>
 
     <footer class="bg-gray-900 text-white py-20 px-6">
-        <p class="text-center font-bold text-sm tracking-widest uppercase">© 2026 RentEstimator. All rights reserved.</p>
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start border-b border-gray-800 pb-16 mb-16 gap-12">
+                <div class="max-w-md">
+                    <div class="flex items-center gap-2 text-rose-500 font-extrabold text-3xl mb-6">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                        <span>RentEstimator</span>
+                    </div>
+                    <p class="text-gray-400 font-medium leading-relaxed">The smarter way to book premium midterm stays in Los Angeles. Powered by real-time market data analysis.</p>
+                </div>
+                <div class="flex gap-20">
+                    <div>
+                        <h4 class="font-bold text-lg mb-6">Company</h4>
+                        <ul class="text-gray-400 space-y-4 font-medium">
+                            <li><a href="#" class="hover:text-white transition">Explore</a></li>
+                            <li><a href="#" class="hover:text-white transition">Reviews</a></li>
+                            <li><a href="#" class="hover:text-white transition">Owners</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-6">Social</h4>
+                        <ul class="text-gray-400 space-y-4 font-medium">
+                            <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                            <li><a href="#" class="hover:text-white transition">X (Twitter)</a></li>
+                            <li><a href="#" class="hover:text-white transition">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-gray-500 font-bold text-sm tracking-widest uppercase">© 2026 RentEstimator Global. All rights reserved.</p>
+        </div>
     </footer>
+
+    <!-- Logic Script -->
+    <script>
+        const locationInput = document.getElementById('locationInput');
+        const dropdown = document.getElementById('neighborhoodDropdown');
+        const searchBtn = document.getElementById('searchBtn');
+        const resultsMain = document.getElementById('resultsMain');
+
+        // Show/Hide Dropdown
+        locationInput.addEventListener('focus', () => {
+            dropdown.classList.remove('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!locationInput.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        function selectLocation(loc) {
+            locationInput.value = loc;
+            dropdown.classList.add('hidden');
+        }
+
+        // Filter Dropdown
+        locationInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const items = dropdown.querySelectorAll('div');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(val) ? 'block' : 'none';
+            });
+        });
+
+        // Search Action
+        searchBtn.addEventListener('click', () => {
+            const loc = locationInput.value || 'Los Angeles';
+            
+            // Loading State
+            resultsMain.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-32">
+                    <div class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-rose-500 mb-8"></div>
+                    <h2 class="text-3xl font-extrabold animate-pulse">Running Market Analysis for ${loc}...</h2>
+                    <p class="text-gray-400 mt-2 font-medium">Sourcing data from 500+ active listings</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                showResults(loc);
+            }, 1200);
+        });
+
+        function showResults(loc) {
+            resultsMain.innerHTML = `
+                <div class="animate-in fade-in slide-in-from-bottom-8 duration-700">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+                        <div>
+                            <div class="inline-block bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-widest mb-4">Estimated Rate</div>
+                            <h2 class="text-5xl font-black text-gray-900 tracking-tight">$385 - $520 <span class="text-2xl text-gray-300 font-bold">/ night avg</span></h2>
+                            <p class="text-gray-400 font-bold mt-2">Based on current demand in ${loc}</p>
+                        </div>
+                        <div class="bg-green-50 text-green-600 font-bold px-6 py-4 rounded-[30px] border border-green-100 flex items-center gap-3 shadow-xl shadow-green-100">
+                            <div class="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
+                            <span>3 Top Value Matches Found</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                        <!-- Card 1 -->
+                        <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-3xl transition-all duration-500 relative">
+                            <div class="absolute top-6 left-6 z-10 bg-rose-500 text-white font-bold px-4 py-1.5 rounded-full text-xs shadow-lg uppercase tracking-wider">Best Overall Value</div>
+                            <div class="aspect-[4/3] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            </div>
+                            <div class="p-8">
+                                <h3 class="font-extrabold text-2xl mb-2 group-hover:text-rose-500 transition">${loc} Modern Gem</h3>
+                                <p class="text-gray-500 font-medium leading-relaxed mb-8">Architectural masterpiece with luxury finishes and smart home integration.</p>
+                                <div class="flex items-end justify-between border-t pt-6">
+                                    <div><span class="text-3xl font-black">$450</span><span class="text-gray-400 font-bold">/nt</span></div>
+                                    <div class="bg-gray-900 text-white rounded-xl px-3 py-1 font-bold text-sm">98% Match</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-3xl transition-all duration-500 relative">
+                            <div class="absolute top-6 left-6 z-10 bg-amber-400 text-amber-950 font-bold px-4 py-1.5 rounded-full text-xs shadow-lg uppercase tracking-wider">Luxury Selection</div>
+                            <div class="aspect-[4/3] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            </div>
+                            <div class="p-8">
+                                <h3 class="font-extrabold text-2xl mb-2 group-hover:text-amber-500 transition">Premium ${loc} Private View</h3>
+                                <p class="text-gray-500 font-medium leading-relaxed mb-8">Unobstructed city views, infinity pool, and world-class interior design.</p>
+                                <div class="flex items-end justify-between border-t pt-6">
+                                    <div><span class="text-3xl font-black">$850</span><span class="text-gray-400 font-bold">/nt</span></div>
+                                    <div class="bg-gray-900 text-white rounded-xl px-3 py-1 font-bold text-sm">95% Match</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-3xl transition-all duration-500 relative">
+                            <div class="absolute top-6 left-6 z-10 bg-indigo-600 text-white font-bold px-4 py-1.5 rounded-full text-xs shadow-lg uppercase tracking-wider">Budget Hero</div>
+                            <div class="aspect-[4/3] overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                            </div>
+                            <div class="p-8">
+                                <h3 class="font-extrabold text-2xl mb-2 group-hover:text-indigo-600 transition">Artisan Loft in ${loc}</h3>
+                                <p class="text-gray-500 font-medium leading-relaxed mb-8">Charming and colorful space in the heart of local culture. Fully stocked kitchen.</p>
+                                <div class="flex items-end justify-between border-t pt-6">
+                                    <div><span class="text-3xl font-black">$325</span><span class="text-gray-400 font-bold">/nt</span></div>
+                                    <div class="bg-gray-900 text-white rounded-xl px-3 py-1 font-bold text-sm">92% Match</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
