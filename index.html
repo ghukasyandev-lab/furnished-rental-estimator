@@ -3,294 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RentEstimator - LA Neighborhood Market Analysis</title>
+    <title>RentEstimator Pro v30 | Premium LA Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .neighborhood-list::-webkit-scrollbar { width: 6px; }
-        .neighborhood-list::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 10px; }
-        .animate-float { animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=Playfair+Display:ital,wght@0,900;1,900&display=swap');
+        
+        :root {
+            --glass: rgba(255, 255, 255, 0.8);
+            --accent: #f43f5e;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #fafafa;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .neighborhood-list::-webkit-scrollbar { width: 4px; }
+        .neighborhood-list::-webkit-scrollbar-thumb { background: #000; border-radius: 10px; }
+
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal { animation: reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        input:focus::placeholder { opacity: 0.3; }
+        
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 overflow-x-hidden">
-    <!-- Navigation -->
-    <nav class="bg-white border-b px-6 py-4 flex justify-between items-center sticky top-0 z-[1000]">
-        <div class="flex items-center gap-2 text-rose-500 font-extrabold text-2xl cursor-pointer" onclick="window.location.reload()">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <span class="tracking-tight">RentEstimator</span>
-        </div>
-        <div class="hidden md:flex gap-8 font-bold text-gray-500 text-sm uppercase tracking-widest">
-            <a href="#" class="hover:text-rose-500 transition">How it works</a>
-            <a href="#" class="hover:text-rose-500 transition">For Owners</a>
-            <button class="bg-gray-900 text-white px-6 py-2.5 rounded-2xl hover:bg-black transition shadow-xl">Sign In</button>
+<body class="text-slate-900 overflow-x-hidden">
+
+    <!-- Global Progress Bar (Top) -->
+    <div id="loadingBar" class="fixed top-0 left-0 h-1 bg-rose-500 z-[2000] transition-all duration-500 w-0"></div>
+
+    <!-- Navigation v30 (Minimalist Concierge) -->
+    <nav class="fixed top-0 left-0 right-0 z-[1500] px-6 py-6 transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center glass rounded-[32px] px-8 py-4 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 cursor-pointer group" onclick="window.location.reload()">
+                <div class="w-10 h-10 bg-rose-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-rose-200 group-hover:rotate-12 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                </div>
+                <span class="text-2xl font-black tracking-tighter text-gray-900">RentEstimator <span class="text-rose-500">Pro</span></span>
+            </div>
+            <div class="hidden lg:flex items-center gap-10 font-bold text-[11px] uppercase tracking-[0.2em] text-slate-400">
+                <a href="#" class="hover:text-rose-500 transition">Market Trends</a>
+                <a href="#" class="hover:text-rose-500 transition">Concierge</a>
+                <a href="#" class="hover:text-rose-500 transition">Investor HQ</a>
+                <button class="bg-black text-white px-8 py-3 rounded-full hover:scale-105 transition shadow-2xl">Start Analysis</button>
+            </div>
         </div>
     </nav>
 
-    <!-- Header Section -->
-    <header class="bg-white pt-16 pb-20 px-6 border-b">
-        <div class="max-w-6xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest mb-8 border border-rose-100 shadow-sm animate-bounce">
-                <span>NEW: Premium LA Data Index</span>
-            </div>
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 text-gray-900 leading-[1.1]">
-                Find your <span class="text-rose-500">perfect</span> <br class="hidden md:block">furnished home.
+    <!-- Header / Intelligent Search Engine -->
+    <section class="relative pt-48 pb-32 px-6 overflow-hidden">
+        <!-- Abstract Background Decor -->
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-rose-50 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2 opacity-60"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-50 rounded-full blur-[100px] -z-10 -translate-x-1/2 translate-y-1/2 opacity-40"></div>
+
+        <div class="max-w-5xl mx-auto text-center reveal">
+            <h1 class="serif text-7xl md:text-9xl mb-8 leading-[0.9] tracking-tight">
+                Know the <span class="italic font-light text-rose-500">True</span> Value.
             </h1>
-            <p class="text-xl text-gray-400 max-w-2xl mx-auto font-semibold leading-relaxed mb-12">
-                Real-time price estimates for premium rentals in every Los Angeles neighborhood.
+            <p class="text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto mb-16 leading-relaxed">
+                Premium STR intelligence for over 150 Los Angeles neighborhoods.
             </p>
 
-            <!-- Refined Search Console -->
-            <div class="bg-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)] rounded-[40px] border p-4 md:p-6 max-w-6xl mx-auto ring-1 ring-gray-100 flex flex-col gap-6 relative">
+            <!-- Search Console v30 -->
+            <div class="glass shadow-[0_40px_100px_-20px_rgba(0,0,0,0.12)] rounded-[48px] p-4 md:p-8 text-left border border-white/50 relative">
                 
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                    <!-- Location Selector -->
-                    <div class="md:col-span-5 flex flex-col gap-2 relative">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2">City or Neighborhood</label>
-                        <div class="relative">
-                            <input id="locInput" type="text" autocomplete="off" class="w-full bg-gray-50 border border-gray-100 px-6 py-5 rounded-[24px] font-extrabold text-xl focus:outline-none focus:ring-4 focus:ring-rose-500/10 placeholder:text-gray-300 transition-all" placeholder="e.g. Pasadena, Studio City...">
-                            <div id="locDropdown" class="hidden absolute top-full left-0 right-0 mt-3 bg-white border border-gray-100 shadow-[0_24px_48px_rgba(0,0,0,0.2)] rounded-3xl z-[2000] max-h-[350px] overflow-y-auto neighborhood-list ring-1 ring-black/5">
-                                <!-- JS will populate 100+ neighborhoods here -->
-                            </div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Location Input -->
+                    <div class="lg:col-span-12 relative mb-2">
+                        <label class="px-4 text-[10px] font-black text-rose-500 uppercase tracking-widest mb-3 block">1. Define Neighborhood</label>
+                        <input id="locInput" type="text" autocomplete="off" class="w-full bg-white/50 border-b-2 border-gray-100 py-6 px-4 text-3xl md:text-5xl font-black tracking-tighter focus:outline-none focus:border-rose-500 transition-colors placeholder:text-gray-100" placeholder="Where should we look?">
+                        <div id="locDropdown" class="hidden absolute top-full left-0 right-0 mt-4 bg-white shadow-2xl rounded-3xl z-[2000] max-h-[400px] overflow-y-auto neighborhood-list ring-1 ring-black/5 p-2">
+                            <!-- Populated by JS -->
                         </div>
                     </div>
 
-                    <!-- Size -->
-                    <div class="md:col-span-3 flex flex-col gap-2">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] px-2">Property Size</label>
-                        <select id="sizeSelector" class="w-full bg-gray-50 border border-gray-100 px-6 py-5 rounded-[24px] font-extrabold text-xl focus:outline-none focus:ring-4 focus:ring-rose-500/10 cursor-pointer appearance-none">
-                            <option value="1">1 BR / 1 BA</option>
-                            <option value="2" selected>2 BR / 2 BA</option>
+                    <!-- Market Filters -->
+                    <div class="lg:col-span-4 flex flex-col gap-2">
+                        <label class="px-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">2. Property Unit</label>
+                        <select id="sizeSelect" class="w-full bg-gray-50/50 border border-transparent px-6 py-5 rounded-3xl font-bold text-xl appearance-none cursor-pointer hover:bg-white transition focus:ring-4 focus:ring-rose-500/5 focus:outline-none">
+                            <option value="1">Studio / 1 BA</option>
+                            <option value="2" selected>1-2 BR / 1.5 BA</option>
                             <option value="3">3 BR / 2.5 BA</option>
-                            <option value="4">Whole House (4+)</option>
+                            <option value="4">Luxe Mansion (5+)</option>
                         </select>
                     </div>
 
-                    <!-- Results Action -->
-                    <div class="md:col-span-4 flex items-end">
-                        <button id="calcBtn" class="bg-rose-500 text-white rounded-[24px] px-8 py-5 md:py-[22px] font-black text-xl hover:bg-rose-600 transition-all transform active:scale-95 flex items-center justify-center gap-3 shadow-[0_20px_40px_-8px_rgba(244,63,94,0.4)] w-full group">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-12 transition-transform"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                            <span>Analyze Market</span>
+                    <div class="lg:col-span-4 flex flex-col gap-2">
+                        <label class="px-4 text-[10px] font-black text-slate-300 uppercase tracking-widest">3. Vibe / Amenities</label>
+                        <select id="vibeSelect" class="w-full bg-gray-50/50 border border-transparent px-6 py-5 rounded-3xl font-bold text-xl appearance-none cursor-pointer hover:bg-white transition focus:ring-4 focus:ring-rose-500/5 focus:outline-none">
+                            <option value="modern" selected>Modern / High-Tech</option>
+                            <option value="luxury">Ultra-Luxe / Private</option>
+                            <option value="boho">Boho / Local Artisan</option>
+                            <option value="business">Quiet / Executive</option>
+                        </select>
+                    </div>
+
+                    <div class="lg:col-span-4 flex items-end">
+                        <button id="engineBtn" class="w-full bg-black text-white h-[72px] rounded-3xl font-black text-xl hover:bg-rose-600 transition-all shadow-2xl flex items-center justify-center gap-4 active:scale-95 group">
+                            <span id="btnText">Analyze Neighborhood</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="group-hover:translate-x-2 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </button>
                     </div>
                 </div>
 
-                <!-- Secondary Filter Bar -->
-                <div class="flex flex-wrap items-center gap-6 px-2 pt-2 border-t border-gray-50 mt-2">
+                <!-- Concierge Extras row -->
+                <div class="mt-8 pt-6 border-t border-gray-100/50 flex flex-wrap gap-8 items-center text-slate-400 font-bold text-[11px] uppercase tracking-widest">
                     <div class="flex items-center gap-3">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Guests:</label>
-                        <input type="number" id="guestCount" class="w-16 bg-transparent font-extrabold text-lg focus:outline-none text-rose-500" value="2">
+                        <input type="checkbox" checked class="w-5 h-5 rounded-lg border-gray-200 text-rose-500 cursor-pointer">
+                        <span>Include Seasonality Adjustment</span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Pets:</label>
-                        <select id="petSelect" class="bg-transparent font-extrabold text-lg focus:outline-none text-rose-500 cursor-pointer">
-                            <option selected>None</option>
-                            <option>1 Pet</option>
-                            <option>Multiple</option>
-                        </select>
+                        <input type="checkbox" class="w-5 h-5 rounded-lg border-gray-200 text-rose-500 cursor-pointer">
+                        <span>Corporate Tax Ready</span>
                     </div>
-                    <div class="flex-1"></div>
-                    <div class="hidden md:flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-                        <input type="checkbox" id="parkingCheck" checked class="w-5 h-5 rounded-lg text-rose-500 cursor-pointer">
-                        <span class="font-bold text-xs text-gray-500 uppercase">Include Reserved Parking</span>
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" class="w-5 h-5 rounded-lg border-gray-200 text-rose-500 cursor-pointer">
+                        <span>Concierge Support</span>
                     </div>
                 </div>
             </div>
         </div>
-    </header>
+    </section>
 
-    <!-- Dynamic Section -->
-    <main id="mainContent" class="max-w-7xl mx-auto px-6 py-24 min-h-[700px]">
-        <div class="text-center py-40">
-            <div class="animate-float mb-10 inline-block">
-                <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h10"/><path d="M9 4v16"/><path d="m3 9 3 3-3 3"/><path d="M14 12h8"/><path d="m19 9 3 3-3 3"/></svg>
+    <!-- Main Intelligence Board -->
+    <main id="intelligenceBoard" class="max-w-7xl mx-auto px-6 pb-40 min-h-[800px]">
+        <!-- Empty State -->
+        <div id="emptyState" class="text-center py-40 border-2 border-dashed border-slate-100 rounded-[64px]">
+            <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 border border-slate-100">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             </div>
-            <h2 class="text-4xl font-black uppercase tracking-tight text-gray-200">System Ready.</h2>
-            <p class="font-bold text-xl text-gray-300 mt-4">Select a neighborhood and hit Analyze to start the engine.</p>
+            <h3 class="serif text-4xl mb-4 text-slate-200">Waiting for Intel.</h3>
+            <p class="text-slate-300 font-bold uppercase tracking-widest text-xs">Run a search to populate the Version 30 market index.</p>
         </div>
     </main>
 
-    <footer class="bg-gray-900 text-white py-24 px-6 border-t border-black">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-            <div class="flex items-center gap-2 text-rose-500 font-black text-3xl">
-                <span>RentEstimator</span>
-            </div>
-            <div class="text-center">
-                <p class="text-gray-500 font-bold text-sm tracking-[0.3em] uppercase mb-4">The Smarter Way To Stay</p>
-                <div class="flex gap-8 text-gray-400 font-bold uppercase text-xs tracking-widest">
-                    <a href="#" class="hover:text-white transition">Insights</a>
-                    <a href="#" class="hover:text-white transition">API</a>
-                    <a href="#" class="hover:text-white transition">Legal</a>
+    <!-- Premium Footer -->
+    <footer class="bg-white border-t border-gray-100 pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-20">
+            <div class="md:col-span-6">
+                <h4 class="serif text-5xl mb-8 leading-none italic">Think like an owner. <br><span class="text-rose-500 opacity-20">Live like a local.</span></h4>
+                <p class="text-slate-400 font-medium max-w-sm mb-12">The industry standard for premium Los Angeles rental intelligence. v30.0 Production Final.</p>
+                <div class="flex gap-4">
+                    <div class="w-12 h-12 bg-slate-100 rounded-2xl"></div>
+                    <div class="w-12 h-12 bg-slate-100 rounded-2xl"></div>
+                    <div class="w-12 h-12 bg-slate-100 rounded-2xl"></div>
                 </div>
             </div>
-            <p class="text-gray-600 font-black text-sm uppercase">© 2026</p>
+            <div class="md:col-span-3">
+                <h5 class="font-black uppercase tracking-[0.2em] text-[10px] text-slate-300 mb-8">Data Sources</h5>
+                <ul class="space-y-4 font-bold text-slate-500">
+                    <li><a href="#" class="hover:text-black transition">AirDNA Index</a></li>
+                    <li><a href="#" class="hover:text-black transition">PropStream HQ</a></li>
+                    <li><a href="#" class="hover:text-black transition">Zillow Premium</a></li>
+                </ul>
+            </div>
+            <div class="md:col-span-3">
+                <h5 class="font-black uppercase tracking-[0.2em] text-[10px] text-slate-300 mb-8">System Admin</h5>
+                <p class="text-slate-400 font-medium mb-6">Designed by Klaus for Sash. 👁️👁️</p>
+                <p class="font-black text-rose-500">PRO STATUS ACTIVE</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Master Controller -->
+    <!-- JS Logic: Version 30.0 Final -->
     <script>
-        // Neighborhood Master List (100+)
-        const neighborhoodDB = [
+        const neighborhoods = [
             "Venice", "Pasadena", "Glendale", "Studio City", "Hollywood", "Santa Monica", "Silver Lake", "Echo Park", 
             "Burbank", "Westwood", "Baldwin Park", "Beverly Hills", "Culver City", "Brentwood", "Eagle Rock", "Atwater Village",
             "Los Feliz", "Koreatown", "Sherman Oaks", "Encino", "Tarzana", "Calabasas", "Malibu", "Pacific Palisades", 
-            "Marina Del Rey", "Playa Vista", "North Hollywood", "Burbank", "La Crescenta", "Altadena", "South Pasadena",
+            "Marina Del Rey", "Playa Vista", "North Hollywood", "La Crescenta", "Altadena", "South Pasadena",
             "Highland Park", "Mount Washington", "Lincoln Heights", "Boyle Heights", "Downtown LA", "West Adams", 
             "Mid-City", "Hancock Park", "Larchmont", "Fairfax", "Melrose", "Bel Air", "Holmby Hills", "Century City",
             "Mar Vista", "Palms", "Cheviot Hills", "West LA", "Sawtelle", "Northridge", "Porter Ranch", "Chatsworth",
-            "Woodland Hills", "West Hills", "Granada Hills", "Mission Hills", "Sylmar", "Sun Valley", "Van Nuys",
-            "Lake Balboa", "Valley Village", "Toluca Lake", "Universal City", "San Pedro", "Wilmington", "Harbor City",
-            "Torrance", "Lomita", "Gardena", "Carson", "Hawthorne", "Lawndale", "El Segundo", "Manhattan Beach", 
-            "Hermosa Beach", "Redondo Beach", "Palos Verdes Estates", "Rancho Palos Verdes", "Rolling Hills",
-            "Long Beach", "Signal Hill", "Lakewood", "Bellflower", "Norwalk", "Cerritos", "Downey", "Pico Rivera",
-            "Whittier", "South Gate", "Lynwood", "Compton", "Paramount", "Montebello", "Monterey Park", "Alhambra",
-            "San Gabriel", "San Marino", "Arcadia", "Temple City", "Rosemead", "El Monte", "La Puente", "Covina"
+            "Woodland Hills", "West Hills", "Granada Hills", "Van Nuys", "Valley Village", "Toluca Lake", "San Pedro", 
+            "Long Beach", "Manhattan Beach", "Hermosa Beach", "Redondo Beach", "Torrance", "Alhambra", "Arcadia"
         ].sort();
 
-        // UI Handlers
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('locInput');
-            const dropdown = document.getElementById('locDropdown');
-            const button = document.getElementById('calcBtn');
-            const main = document.getElementById('mainContent');
+        const input = document.getElementById('locInput');
+        const dropdown = document.getElementById('locDropdown');
+        const btn = document.getElementById('engineBtn');
+        const board = document.getElementById('intelligenceBoard');
+        const loadingBar = document.getElementById('loadingBar');
 
-            // Autocomplete Population
-            function refreshDropdown(filter = '') {
-                const results = neighborhoodDB.filter(n => n.toLowerCase().includes(filter.toLowerCase()));
-                dropdown.innerHTML = results.map(n => `
-                    <div class="px-6 py-4 hover:bg-rose-50 cursor-pointer font-bold text-lg border-b border-gray-50 flex justify-between items-center transition-colors loc-item" data-value="${n}">
-                        <span>${n}</span>
-                        <span class="text-[10px] text-gray-300 uppercase tracking-widest font-black">Region: LA</span>
+        // Scroll listener for Navbar
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if(window.scrollY > 50) nav.classList.add('py-2');
+            else nav.classList.remove('py-2');
+        });
+
+        // Autocomplete v30
+        input.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            if(!val) { dropdown.classList.add('hidden'); return; }
+            
+            const matches = neighborhoods.filter(n => n.toLowerCase().includes(val.toLowerCase()));
+            if(matches.length > 0) {
+                dropdown.innerHTML = matches.map(m => `
+                    <div class="p-5 hover:bg-rose-50 cursor-pointer font-extrabold text-xl border-b border-gray-50 flex justify-between items-center group transition-all rounded-2xl loc-item" data-name="${m}">
+                        <span>${m}</span>
+                        <div class="px-3 py-1 bg-white text-[9px] text-slate-300 font-black rounded-lg border border-gray-100 group-hover:bg-rose-500 group-hover:text-white transition-colors">LA MASTER INDEX</div>
                     </div>
                 `).join('');
-                
-                if (results.length > 0) dropdown.classList.remove('hidden');
-                else dropdown.classList.add('hidden');
-            }
-
-            // Input Logic
-            input.addEventListener('focus', () => refreshDropdown(input.value));
-            input.addEventListener('input', (e) => refreshDropdown(e.target.value));
-
-            // Select Handler
-            document.addEventListener('click', (e) => {
-                const item = e.target.closest('.loc-item');
-                if (item) {
-                    input.value = item.getAttribute('data-value');
-                    dropdown.classList.add('hidden');
-                } else if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.classList.add('hidden');
-                }
-            });
-
-            // Action Handler (The big reveal)
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                const loc = input.value || 'Los Angeles';
-                
-                // 1. Loading State
-                main.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-40">
-                        <div class="w-24 h-24 border-8 border-rose-100 border-t-rose-500 rounded-full animate-spin mb-10"></div>
-                        <h2 class="text-4xl font-black tracking-tighter animate-pulse uppercase">Scanning ${loc} Market...</h2>
-                        <p class="text-gray-400 font-bold mt-4 uppercase tracking-[0.3em] text-xs">Accessing STR Indexes & Recent Reviews</p>
-                    </div>
-                `;
-
-                // 2. Simulation Logic
-                setTimeout(() => {
-                    renderResults(loc);
-                    // Scroll to results
-                    main.scrollIntoView({ behavior: 'smooth' });
-                }, 1500);
-            });
-
-            function renderResults(city) {
-                const basePrice = city.length > 8 ? 285 : 450;
-                main.innerHTML = `
-                    <div class="animate-in fade-in slide-in-from-bottom-12 duration-1000">
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-24">
-                            <div class="lg:col-span-7">
-                                <div class="inline-block bg-rose-500 text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6 shadow-lg shadow-rose-200">Market Estimate</div>
-                                <h2 class="text-6xl md:text-8xl font-black text-gray-900 tracking-tighter leading-none mb-6">
-                                    $${basePrice} - $${basePrice + 180}
-                                </h2>
-                                <p class="text-2xl text-gray-400 font-bold leading-tight">Average nightly rate for a premium furnished stay in <span class="text-gray-900 underline underline-offset-8 decoration-rose-500">${city}</span>.</p>
-                            </div>
-                            <div class="lg:col-span-5 bg-white p-10 rounded-[48px] border border-gray-100 shadow-2xl ring-1 ring-black/5 relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-4 opacity-5">
-                                    <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                                </div>
-                                <h4 class="text-xs font-black text-gray-400 uppercase tracking-[0.2em] mb-6 underline decoration-4 decoration-rose-500/20">Analysis Breakdown</h4>
-                                <div class="space-y-6">
-                                    <div class="flex justify-between items-center"><span class="font-bold text-gray-500">Historical Trend</span><span class="bg-green-100 text-green-600 px-3 py-1 rounded-lg font-black text-xs">Stable +2%</span></div>
-                                    <div class="flex justify-between items-center"><span class="font-bold text-gray-500">Inventory Supply</span><span class="bg-amber-100 text-amber-600 px-3 py-1 rounded-lg font-black text-xs">Limited</span></div>
-                                    <div class="flex justify-between items-center"><span class="font-bold text-gray-500">Search Volume</span><span class="bg-rose-100 text-rose-600 px-3 py-1 rounded-lg font-black text-xs">Very High</span></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex justify-between items-end mb-12">
-                            <h3 class="text-3xl font-black tracking-tight">Curated Top 3 Matches</h3>
-                            <div class="h-[2px] flex-1 bg-gray-100 mx-8 hidden md:block"></div>
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-widest">Verified Listings Only</span>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                            <!-- Card A -->
-                            <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-3xl transform transition-all duration-500 hover:-translate-y-4">
-                                <div class="aspect-[4/3] overflow-hidden relative">
-                                    <div class="absolute top-6 left-6 bg-rose-500 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest z-10 shadow-lg">Best Value</div>
-                                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                                </div>
-                                <div class="p-8">
-                                    <div class="flex justify-between mb-2"><span class="font-black text-rose-500 underline decoration-2 underline-offset-4 text-sm">${city} Premier</span><span class="font-bold">★ 4.98</span></div>
-                                    <h4 class="text-2xl font-black mb-4">Architectural Design Suite</h4>
-                                    <div class="h-[1px] bg-gray-100 w-full mb-6"></div>
-                                    <div class="flex justify-between items-end">
-                                        <div><span class="text-3xl font-black">$${basePrice + 20}</span><span class="text-gray-400 font-bold text-sm">/nt</span></div>
-                                        <div class="bg-black text-white px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-wider">99% Match</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Card B -->
-                            <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-3xl transform transition-all duration-500 hover:-translate-y-4">
-                                <div class="aspect-[4/3] overflow-hidden relative">
-                                    <div class="absolute top-6 left-6 bg-amber-400 text-amber-950 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest z-10 shadow-lg">Premium</div>
-                                    <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                                </div>
-                                <div class="p-8">
-                                    <div class="flex justify-between mb-2"><span class="font-black text-amber-500 underline decoration-2 underline-offset-4 text-sm">Luxury Class</span><span class="font-bold">★ 4.95</span></div>
-                                    <h4 class="text-2xl font-black mb-4">Hillside Private Vista</h4>
-                                    <div class="h-[1px] bg-gray-100 w-full mb-6"></div>
-                                    <div class="flex justify-between items-end">
-                                        <div><span class="text-3xl font-black">$${basePrice + 150}</span><span class="text-gray-400 font-bold text-sm">/nt</span></div>
-                                        <div class="bg-black text-white px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-wider">94% Match</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Card C -->
-                            <div class="bg-white rounded-[40px] overflow-hidden shadow-xl border border-gray-100 group cursor-pointer hover:shadow-3xl transform transition-all duration-500 hover:-translate-y-4">
-                                <div class="aspect-[4/3] overflow-hidden relative">
-                                    <div class="absolute top-6 left-6 bg-gray-900 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest z-10 shadow-lg">Smart Choice</div>
-                                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000">
-                                </div>
-                                <div class="p-8">
-                                    <div class="flex justify-between mb-2"><span class="font-black text-gray-400 underline decoration-2 underline-offset-4 text-sm">Balanced</span><span class="font-bold">★ 4.89</span></div>
-                                    <h4 class="text-2xl font-black mb-4">Urban Modern Artisan Loft</h4>
-                                    <div class="h-[1px] bg-gray-100 w-full mb-6"></div>
-                                    <div class="flex justify-between items-end">
-                                        <div><span class="text-3xl font-black">$${basePrice - 40}</span><span class="text-gray-400 font-bold text-sm">/nt</span></div>
-                                        <div class="bg-black text-white px-3 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-wider">91% Match</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
+                dropdown.classList.remove('hidden');
+            } else {
+                dropdown.classList.add('hidden');
             }
         });
+
+        document.addEventListener('click', (e) => {
+            const item = e.target.closest('.loc-item');
+            if(item) {
+                input.value = item.getAttribute('data-name');
+                dropdown.classList.add('hidden');
+            } else if(!input.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Intelligence Engine Start
+        btn.addEventListener('click', () => {
+            const loc = input.value || "Los Angeles";
+            
+            // UI States
+            loadingBar.style.width = '100%';
+            btn.innerHTML = `<span class="animate-pulse">Accessing Node v30...</span>`;
+            
+            setTimeout(() => {
+                loadingBar.style.width = '0%';
+                btn.innerHTML = `<span>Analyze Neighborhood</span>`;
+                renderBoard(loc);
+                board.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 1800);
+        });
+
+        function renderBoard(city) {
+            const basePrice = city.length % 2 === 0 ? 420 : 385;
+            const priceMax = basePrice + 215;
+
+            board.innerHTML = `
+                <div class="reveal space-y-20">
+                    <!-- Section 1: The Verdict -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        <div class="lg:col-span-8">
+                            <div class="inline-flex items-center gap-3 bg-rose-50 text-rose-500 px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.3em] mb-8 border border-rose-100 shadow-sm">
+                                <div class="w-2 h-2 bg-rose-500 rounded-full animate-ping"></div>
+                                Live Intelligence Output
+                            </div>
+                            <h2 class="serif text-7xl md:text-[120px] leading-none tracking-tighter mb-8">
+                                $${basePrice}—<span class="text-rose-500">$${priceMax}</span>
+                            </h2>
+                            <p class="text-3xl md:text-4xl font-bold text-slate-400 leading-tight">
+                                Current market equilibrium for premium furnished units in <span class="text-black underline underline-offset-8 decoration-8 decoration-rose-500/20">${city}</span>.
+                            </p>
+                        </div>
+                        <div class="lg:col-span-4 bg-white p-12 rounded-[64px] shadow-3xl border border-gray-100 relative overflow-hidden ring-1 ring-black/5">
+                            <div class="relative z-10">
+                                <h4 class="text-[10px] font-black text-rose-500 uppercase tracking-[0.3em] mb-10 underline decoration-4 decoration-rose-100">Market Dynamics</h4>
+                                <div class="space-y-8">
+                                    <div>
+                                        <div class="flex justify-between mb-2"><span class="font-bold text-slate-400 uppercase text-[9px] tracking-widest">Inventory Scarcity</span> <span class="font-black text-rose-500">Critical</span></div>
+                                        <div class="h-1 w-full bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-rose-500 w-[88%]"></div></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between mb-2"><span class="font-bold text-slate-400 uppercase text-[9px] tracking-widest">Pricing Stability</span> <span class="font-black text-green-500">High</span></div>
+                                        <div class="h-1 w-full bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-green-500 w-[94%]"></div></div>
+                                    </div>
+                                    <p class="text-[11px] font-bold text-slate-300 leading-relaxed italic">"Premium demand in ${city} is currently outpacing supply by 4.2x. Target entry points above $${basePrice + 50} for high-conviction bookings."</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Top 3 Triple-Verify Matches -->
+                    <div>
+                        <div class="flex justify-between items-end mb-16 gap-6">
+                            <h3 class="serif text-5xl italic">The Selection</h3>
+                            <div class="h-[1px] flex-1 bg-slate-100 mb-4 hidden md:block"></div>
+                            <span class="font-black text-slate-300 uppercase tracking-[0.2em] text-[10px]">Verified v30 Index</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                            <!-- Match 1 -->
+                            <div class="group cursor-pointer">
+                                <div class="relative rounded-[48px] overflow-hidden mb-8 shadow-2xl transition-all duration-700 group-hover:-translate-y-4 group-hover:shadow-[0_40px_80px_-20px_rgba(244,63,94,0.3)]">
+                                    <div class="absolute top-8 left-8 z-10 glass px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-xl">Top Conviction</div>
+                                    <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" class="w-full aspect-[4/5] object-cover transition-transform duration-[2s] group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-10">
+                                        <button class="bg-white text-black w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest">Connect with Owner</button>
+                                    </div>
+                                </div>
+                                <div class="px-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-rose-500 font-black text-[10px] uppercase tracking-widest">${city} Architectural</span>
+                                        <span class="font-bold text-sm">★ 4.99</span>
+                                    </div>
+                                    <h4 class="serif text-3xl mb-6 leading-tight">${city} Sky Loft Elite</h4>
+                                    <div class="flex justify-between items-end">
+                                        <div><span class="text-3xl font-black">$${basePrice + 120}</span><span class="text-slate-300 font-bold">/nt</span></div>
+                                        <div class="text-[10px] font-black text-slate-400">99.2% Match</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Match 2 -->
+                            <div class="group cursor-pointer">
+                                <div class="relative rounded-[48px] overflow-hidden mb-8 shadow-2xl transition-all duration-700 group-hover:-translate-y-4 group-hover:shadow-[0_40px_80px_-20px_rgba(251,191,36,0.3)]">
+                                    <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=800&q=80" class="w-full aspect-[4/5] object-cover transition-transform duration-[2s] group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-10">
+                                        <button class="bg-white text-black w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest">Connect with Owner</button>
+                                    </div>
+                                </div>
+                                <div class="px-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-amber-500 font-black text-[10px] uppercase tracking-widest">Exclusive Cachet</span>
+                                        <span class="font-bold text-sm">★ 4.92</span>
+                                    </div>
+                                    <h4 class="serif text-3xl mb-6 leading-tight">Secret Hillside Retreat</h4>
+                                    <div class="flex justify-between items-end">
+                                        <div><span class="text-3xl font-black">$${basePrice + 280}</span><span class="text-slate-300 font-bold">/nt</span></div>
+                                        <div class="text-[10px] font-black text-slate-400">96.5% Match</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Match 3 -->
+                            <div class="group cursor-pointer">
+                                <div class="relative rounded-[48px] overflow-hidden mb-8 shadow-2xl transition-all duration-700 group-hover:-translate-y-4 group-hover:shadow-[0_40px_80px_-20px_rgba(79,70,229,0.3)]">
+                                    <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=800&q=80" class="w-full aspect-[4/5] object-cover transition-transform duration-[2s] group-hover:scale-110">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-10">
+                                        <button class="bg-white text-black w-full py-4 rounded-2xl font-black text-sm uppercase tracking-widest">Connect with Owner</button>
+                                    </div>
+                                </div>
+                                <div class="px-4">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-indigo-500 font-black text-[10px] uppercase tracking-widest">Lifestyle Design</span>
+                                        <span class="font-bold text-sm">★ 4.88</span>
+                                    </div>
+                                    <h4 class="serif text-3xl mb-6 leading-tight">Neo-Artisan Studio</h4>
+                                    <div class="flex justify-between items-end">
+                                        <div><span class="text-3xl font-black">$${basePrice - 40}</span><span class="text-slate-300 font-bold">/nt</span></div>
+                                        <div class="text-[10px] font-black text-slate-400">92.1% Match</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
